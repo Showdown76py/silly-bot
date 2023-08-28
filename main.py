@@ -5,7 +5,7 @@ from discord import app_commands
 from discord.ext import tasks
 import requests, time
 import random, json
-import dotenv
+import dotenv, traceback
 
 def get_api_key():
     lines = open("api_key.txt").read().splitlines()
@@ -63,21 +63,24 @@ def format_points(points):
     seconds=50
 )
 async def update_stats():
-    await asyncio.sleep(10)
-    guild = app.get_guild(1145009611481559110)
-    channel = app.get_channel(1145179961771184209)
-    embed = await generate_stats_embed(guild)
-    async for msg in channel.history(limit=1):
-        if msg.author.id == app.user.id:
-            await msg.edit(
+    try:
+        await asyncio.sleep(10)
+        guild = app.get_guild(1145009611481559110)
+        channel = app.get_channel(1145179961771184209)
+        embed = await generate_stats_embed(guild)
+        async for msg in channel.history(limit=1):
+            if msg.author.id == app.user.id:
+                await msg.edit(
+                    content=f"Updated <t:{int(time.time())}:R> (<t:{int(time.time())}:f>)",
+                    embed=embed
+                )
+                return
+            await channel.send(
                 content=f"Updated <t:{int(time.time())}:R> (<t:{int(time.time())}:f>)",
                 embed=embed
             )
-            return
-    await channel.send(
-        content=f"Updated <t:{int(time.time())}:R> (<t:{int(time.time())}:f>)",
-        embed=embed
-    )
+    except:
+        traceback.print_exc()
         
 
 async def generate_stats_embed(guild):
@@ -154,11 +157,8 @@ async def generate_stats_embed(guild):
         value="\n".join(["**" + DBTOCLEAR[game_name] + "**: " + format_points(valid_games[game_name]) + ' exp' for game_name in valid_games.keys()]), # TODO: make this look better
         inline=True
     )
-    embed.add_field(
-        name="👤 Guild Members",
-        value=f"**{online_players} member{'s' if online_players>1 else ''}** online\n{e.join(('<:online:1145331611789955142> **' if member['status'] else '<:offline:1145331735664533606> ') + '[' + member['name'] + f'](https://plancke.io/hypixel/player/stats/{uuid})' + ('**' if member['status'] else '') + ' [' + member['guild_rank'] + ']' + (' online in **'+DBTOCLEAR[member['gameType']] + ' ' + ('Lobby' if member['mode'] == 'LOBBY' else 'Game') + '**' if member['status'] else '') for (uuid,member) in MEMBERS.items())}" ,
-        inline=False
-    )
+    embed.description = '## 👥 Guild Members\n'
+    embed.description += f"**{online_players} member{'s' if online_players>1 else ''}** online\n{e.join(('<:online:1145331611789955142> **' if member['status'] else '<:offline:1145331735664533606> ') + '[' + member['name'] + f'](https://plancke.io/hypixel/player/stats/{uuid})' + ('**' if member['status'] else '') + ' [' + member['guild_rank'] + ']' + (' online in **'+DBTOCLEAR[member['gameType']] + ' ' + ('Lobby' if member['mode'] == 'LOBBY' else 'Game') + '**' if member['status'] else '') for (uuid,member) in MEMBERS.items())}"
 
     
     
