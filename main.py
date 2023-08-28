@@ -158,7 +158,7 @@ async def generate_stats_embed(guild):
         inline=True
     )
     embed.description = '## 👥 Guild Members\n'
-    embed.description += f"**{online_players} member{'s' if online_players>1 else ''}** online\n{e.join(('<:online:1145331611789955142> **' if member['status'] else '<:offline:1145331735664533606> ') + '[' + member['name'] + f'](https://plancke.io/hypixel/player/stats/{uuid})' + ('**' if member['status'] else '') + ' [' + member['guild_rank'] + ']' + (' online in **'+DBTOCLEAR[member['gameType']] + ' ' + ('Lobby' if member['mode'] == 'LOBBY' else 'Game') + '**' if member['status'] else '') for (uuid,member) in MEMBERS.items())}"
+    embed.description += f"**{online_players} member{'s' if online_players>1 else ''}** online\n{e.join(('<:online:1145331611789955142> **' if member['status'] else '<:offline:1145331735664533606> ') + '[' + member['name'] + f'](https://plancke.io/hypixel/player/stats/' + member['name'] + ')' + ('**' if member['status'] else '') + ' [' + member['guild_rank'] + ']' + (' online in **'+DBTOCLEAR[member['gameType']] + ' ' + ('Lobby' if member['mode'] == 'LOBBY' else 'Game') + '**' if member['status'] else '') for (uuid,member) in MEMBERS.items())}"
 
     
     
