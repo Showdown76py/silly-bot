@@ -1,1 +1,3 @@
 api_key.txt
+.env
+# Yes, the token from the precedent commit has been revoked
